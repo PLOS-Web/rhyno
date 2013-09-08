@@ -46,7 +46,7 @@ class Rhyno(object):
         returns article metadata dict if successful
         '''
         payload = {
-            'doi': doi
+            'name': doi
             }
         if force_reingest:
             payload['force_reingest'] = True
