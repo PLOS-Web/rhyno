@@ -12,6 +12,10 @@ class Rhyno(object):
         self.verify_ssl=verify_ssl
 
     '''EXCEPTIONS'''
+    class Base400Error(Exception):
+        def __init__(self, message):
+            Exception.__init__(self, "Server responded with a 400: %s" % message)
+
     class Base405Error(Exception):
         def __init__(self, message):
             Exception.__init__(self, "Server responded with a 405: %s" % message)
@@ -26,6 +30,8 @@ class Rhyno(object):
 
     @staticmethod
     def handle_error_codes(r):
+        if r.status_code == 400:
+            raise Rhyno.Base400Error(r.content)
         if r.status_code == 405:
             raise Rhyno.Base405Error(r.content)
         if r.status_code == 404:
@@ -54,7 +60,7 @@ class Rhyno(object):
             payload['force_reingest'] = True
         r = requests.post(self.host + '/ingestibles', data=payload, verify=self.verify_ssl)
         if verbose:
-            print(utils.report("POST /ingestibles/ %s"% pretty_dict_repr(payload), r))
+            print(utils.report("POST /ingestibles/ %s" % pretty_dict_repr(payload), r))
 
         self.handle_error_codes(r)
         return r.content
@@ -179,6 +185,7 @@ class Rhyno(object):
             'issueUri': issue_uri,
             'displayName': display_name,
             'imageUri': image_uri,
+            'respectOrder': True,
         }
         r = requests.post(self.host + "/volumes/%s" % volume_uri, data=json.dumps(payload), verify=self.verify_ssl)
         if verbose:
@@ -186,3 +193,16 @@ class Rhyno(object):
         self.handle_error_codes(r)
         return r.content
 
+    def modify_issue(self, issue_uri, display_name, image_uri, article_order, verbose=False):
+        payload = {
+            'respectOrder': True,
+            'issueUri': issue_uri,
+            'displayName': display_name,
+            'imageUri': image_uri,
+            'articleOrder': article_order,
+        }
+        r = requests.patch(self.host + "/issues/%s" % issue_uri, data=json.dumps(payload), verify=self.verify_ssl)
+        if verbose:
+            print(utils.report("POST /issues/%s" % issue_uri, r))
+        self.handle_error_codes(r)
+        return r.content

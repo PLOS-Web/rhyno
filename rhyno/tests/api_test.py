@@ -24,8 +24,9 @@ class TestVolIss(unittest.TestCase):
         plosone = self.r.read_journal('PLoSONE')
         logger.debug(plosone)
 
+
     def test_create_volume(self):
-        new_volume = self.r.create_volume('PLoSONE', 'info:doi/10.1371/volume.pone.v04',
+        new_volume = self.r.create_volume('PLoSONE', 'info:doi/10.1371/volume.pone.v10', #incr
                                           '2013', 'info:doi/10.1371/image.pbio.v01.i01',
                                           verbose=True)
         logger.debug(new_volume)
@@ -35,9 +36,15 @@ class TestVolIss(unittest.TestCase):
 
     def test_create_issue(self):
         new_issue = self.r.create_issue('info:doi/10.1371/volume.pone.v01',
-                                        'info:doi/10.1371/volume.pone.v01.i01',
+                                        'info:doi/10.1371/volume.pone.v01.i09', #incr
                                         '1', 'info:doi/10.1371/image.pbio.v01.i01',
                                         verbose=True)
+        logger.debug(new_issue)
+
+    def test_modify_issue(self):
+        new_issue = self.r.modify_issue('info:doi/10.1371/volume.pone.v01.i01',
+                                        '1', 'info:doi/10.1371/image.pbio.v01.i01',
+                                        ['10.1371/journal.pone.0000001', '10.1371/journal.pone.0000000'])
         logger.debug(new_issue)
 
 
