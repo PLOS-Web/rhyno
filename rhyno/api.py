@@ -142,9 +142,47 @@ class Rhyno(object):
         return json.loads(r.content)
 
     def get_journals(self, verbose=False):
-        logger.debug("Getting journals ...")
         r = requests.get(self.host + "/journals", verify=self.verify_ssl)
         if verbose:
             print(utils.report("GET /journals", r))
         self.handle_error_codes(r)
         return json.loads(r.content)
+
+    def read_journal(self, journal_key, verbose=False):
+        r = requests.get(self.host + "/journals/%s" % journal_key, verify=self.verify_ssl)
+        if verbose:
+            print(utils.report("GET /journals/%s" % journal_key, r))
+        self.handle_error_codes(r)
+        return json.loads(r.content)
+
+    def create_volume(self, journal_key, volume_uri, display_name, image_uri, verbose=False):
+        payload = {
+            'volumeUri': volume_uri,
+            'displayName': display_name,
+            'imageUri': image_uri,
+        }
+        r = requests.post(self.host + "/journals/%s" % journal_key, data=json.dumps(payload), verify=self.verify_ssl)
+        if verbose:
+            print(utils.report("POST /journals/%s" % journal_key, r))
+        self.handle_error_codes(r)
+        return r.content
+
+    def get_volume(self, volume_uri, verbose=False):
+        r = requests.get(self.host + "/volumes/%s" % volume_uri, verify=self.verify_ssl)
+        if verbose:
+            print(utils.report("GET /volume/%s" % volume_uri, r))
+        self.handle_error_codes(r)
+        return json.loads(r.content)
+
+    def create_issue(self, volume_uri, issue_uri, display_name, image_uri, verbose=False):
+        payload = {
+            'issueUri': issue_uri,
+            'displayName': display_name,
+            'imageUri': image_uri,
+        }
+        r = requests.post(self.host + "/volumes/%s" % volume_uri, data=json.dumps(payload), verify=self.verify_ssl)
+        if verbose:
+            print(utils.report("POST /volumes/%s" % volume_uri, r))
+        self.handle_error_codes(r)
+        return r.content
+

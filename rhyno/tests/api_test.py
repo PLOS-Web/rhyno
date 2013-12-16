@@ -17,12 +17,28 @@ class TestVolIss(unittest.TestCase):
         self.r = Rhyno(API_HOST)
 
     def test_get_journals(self):
-        logger.debug("testing get journals ...")
         journals = self.r.get_journals()
         logger.debug(journals)
 
+    def test_read_journals(self):
+        plosone = self.r.read_journal('PLoSONE')
+        logger.debug(plosone)
 
+    def test_create_volume(self):
+        new_volume = self.r.create_volume('PLoSONE', 'info:doi/10.1371/volume.pone.v04',
+                                          '2013', 'info:doi/10.1371/image.pbio.v01.i01',
+                                          verbose=True)
+        logger.debug(new_volume)
 
+    def test_read_volume(self):
+        logger.debug(self.r.get_volume('info:doi/10.1371/volume.pone.v01'))
+
+    def test_create_issue(self):
+        new_issue = self.r.create_issue('info:doi/10.1371/volume.pone.v01',
+                                        'info:doi/10.1371/volume.pone.v01.i01',
+                                        '1', 'info:doi/10.1371/image.pbio.v01.i01',
+                                        verbose=True)
+        logger.debug(new_issue)
 
 
 class TestRhinoAPI(unittest.TestCase):
