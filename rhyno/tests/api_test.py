@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
 import unittest
+import logging
+logger = logging.getLogger(__name__)
 
 from ..api import Rhyno
 
@@ -9,6 +11,19 @@ SHELL_HOST = 'iad-webprod-devstack01.int.plos.org'
 TEST_PACKAGE_FILENAME = 'pone.0057000.zip'
 TEST_PACKAGE_DOI = 'info:doi/10.1371/journal.pone.0057000'
 DOI_PREFIX = "info:doi/10.1371/journal."
+
+class TestVolIss(unittest.TestCase):
+    def setUp(self):
+        self.r = Rhyno(API_HOST)
+
+    def test_get_journals(self):
+        logger.debug("testing get journals ...")
+        journals = self.r.get_journals()
+        logger.debug(journals)
+
+
+
+
 
 class TestRhinoAPI(unittest.TestCase):
     def setUp(self):     

@@ -1,6 +1,8 @@
 import json
 import requests
 from . import utils
+import logging
+logger = logging.getLogger(__name__)
 
 API_HOST = 'https://webprod.plosjournals.org/api'
 
@@ -137,4 +139,12 @@ class Rhyno(object):
         if verbose:
             print(utils.report("POST /articles/%s?state" % doi, r))
         self.handle_error_codes(r) 
+        return json.loads(r.content)
+
+    def get_journals(self, verbose=False):
+        logger.debug("Getting journals ...")
+        r = requests.get(self.host + "/journals", verify=self.verify_ssl)
+        if verbose:
+            print(utils.report("GET /journals", r))
+        self.handle_error_codes(r)
         return json.loads(r.content)
