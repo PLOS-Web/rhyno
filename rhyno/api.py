@@ -111,9 +111,9 @@ class Rhyno(object):
             'pmcSyndicationState': 'PENDING',
             'published': publish
             }
-        r = requests.put(self.host + '/articles/%s?state' % doi, data=json.dumps(payload), verify=self.verify_ssl)
+        r = requests.patch(self.host + '/articles/%s?state' % doi, data=json.dumps(payload), verify=self.verify_ssl)
         if verbose:
-            print(utils.report("POST /articles/%s?state" % doi, r))
+            print(utils.report("PATCH /articles/%s?state" % doi, r))
         self.handle_error_codes(r) 
         return json.loads(r.content)
 
