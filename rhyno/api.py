@@ -96,7 +96,7 @@ class Rhyno(object):
         return json.loads(r.content)
     
     def is_published(self, doi, verbose=False):
-        return self._get_state(doi, verbose)['published']
+        return self._get_state(doi, verbose)['state'] == 'published'
 
     def get_crossref_syndication_state(self, doi, verbose=False):
         return self._get_state(doi, verbose)['crossRefSyndicationState']
@@ -106,14 +106,13 @@ class Rhyno(object):
 
     def _base_publish(self, doi, publish, verbose=False):
         #'PENDING' has no effect on syndication
+        
         payload = {
-            'crossRefSynicationState': 'PENDING',
-            'pmcSyndicationState': 'PENDING',
-            'published': publish
+            'state': 'published'
             }
-        r = requests.patch(self.host + '/articles/%s?state' % doi, data=json.dumps(payload), verify=self.verify_ssl)
+        r = requests.patch(self.host + '/articles/%s' % doi, data=json.dumps(payload), verify=self.verify_ssl)
         if verbose:
-            print(utils.report("PATCH /articles/%s?state" % doi, r))
+            print(utils.report("PATCH /articles/%s" % doi, r))
         self.handle_error_codes(r) 
         return json.loads(r.content)
 
