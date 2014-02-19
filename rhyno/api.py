@@ -106,7 +106,7 @@ class Rhyno(object):
 
     def _base_publish(self, doi, publish, verbose=False):
         #'PENDING' has no effect on syndication
-        
+
         payload = {
             'state': 'published'
             }
@@ -120,9 +120,11 @@ class Rhyno(object):
         self._base_publish(doi, publish=True, verbose=verbose)
 
     def unpublish(self, doi, verbose=False):
+        raise NotImplementedError
         self._base_publish(doi, publish=False, verbose=verbose)
 
     def syndicate_pmc(self, doi, verbose=False):
+        raise NotImplementedError
         payload = {
             'crossRefSynicationState': 'PENDING',
             'pmcSyndicationState': 'IN_PROGRESS',
@@ -135,6 +137,7 @@ class Rhyno(object):
         return json.loads(r.content)
 
     def syndicate_crossref(self, doi, verbose=False):
+        raise NotImplementedError
         payload = {
             'crossRefSynicationState': 'IN_PROGRESS',
             'pmcSyndicationState': 'PENDING',
