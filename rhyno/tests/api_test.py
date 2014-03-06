@@ -79,12 +79,6 @@ class TestRhinoAPI(unittest.TestCase):
 
     def test_crossref_syndication_state(self):
         self.r.get_crossref_syndication_state(TEST_PACKAGE_DOI, verbose=True)
-
-    def test_syndicate_pmc(self):
-        self.r.syndicate_pmc(TEST_PACKAGE_DOI, verbose=True)
-
-    def test_syndicate_crossref(self):
-        self.r.syndicate_crossref(TEST_PACKAGE_DOI, verbose=True)
     
         
 if __name__ == '__main__':

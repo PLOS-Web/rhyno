@@ -104,12 +104,23 @@ class Rhyno(object):
     def get_pmc_syndication_state(self, doi, verbose=False):
         return self._get_state(doi, verbose)['pmcSyndicationState']
 
-    def _base_publish(self, doi, publish, verbose=False):
-        #'PENDING' has no effect on syndication
-
+    def _base_publish(self, doi, publish=True, syndicate_all=False, verbose=False):
+        if publish:
+            state = 'published'
+        else:
+            state = 'ingested'
         payload = {
-            'state': 'published'
+            'state': state
+        }
+
+        if syndicate_all:
+            syndications = {
+                'CROSSREF': {'status': 'IN_PROGRESS'},
+                'PMC': {'status': 'IN_PROGRESS'},
+                'PUBMED': {'status': 'IN_PROGRESS'}
             }
+            payload['syndications'] = syndications
+
         r = requests.patch(self.host + '/articles/%s' % doi, data=json.dumps(payload), verify=self.verify_ssl)
         if verbose:
             print(utils.report("PATCH /articles/%s" % doi, r))
@@ -119,35 +130,12 @@ class Rhyno(object):
     def publish(self, doi, verbose=False):
         self._base_publish(doi, publish=True, verbose=verbose)
 
+    def production_publish(self, doi, verbose=False):
+        self._base_publish(doi, publish=True, syndicate_all=True, verbose=verbose)
+
     def unpublish(self, doi, verbose=False):
         raise NotImplementedError
         self._base_publish(doi, publish=False, verbose=verbose)
-
-    def syndicate_pmc(self, doi, verbose=False):
-        raise NotImplementedError
-        payload = {
-            'crossRefSynicationState': 'PENDING',
-            'pmcSyndicationState': 'IN_PROGRESS',
-            'published': True
-            }
-        r = requests.put(self.host + '/articles/%s?state' % doi, data=json.dumps(payload), verify=self.verify_ssl)
-        if verbose:
-            print(utils.report("POST /articles/%s?state" % doi, r))
-        self.handle_error_codes(r) 
-        return json.loads(r.content)
-
-    def syndicate_crossref(self, doi, verbose=False):
-        raise NotImplementedError
-        payload = {
-            'crossRefSynicationState': 'IN_PROGRESS',
-            'pmcSyndicationState': 'PENDING',
-            'published': True
-            }
-        r = requests.put(self.host + '/articles/%s?state' % doi, data=json.dumps(payload), verify=self.verify_ssl)
-        if verbose:
-            print(utils.report("POST /articles/%s?state" % doi, r))
-        self.handle_error_codes(r) 
-        return json.loads(r.content)
 
     def get_journals(self, verbose=False):
         r = requests.get(self.host + "/journals", verify=self.verify_ssl)
