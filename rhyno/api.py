@@ -66,6 +66,8 @@ class Rhyno(object):
         return r.content
 
     def ingest_zip(self, archive_name, force_reingest=False, verbose=False):
+        raise NotImplementedError
+        """
         try:
             archive = open(archive_name, 'rb')
         except IOError as e:
@@ -80,6 +82,7 @@ class Rhyno(object):
             print(utils.report("POST /zip/ %s"% utils.pretty_dict_repr(files), r))
         self.handle_error_codes(r)
         return json.loads(r.content)
+        """
 
     def get_metadata(self, doi, verbose=False):
         r = requests.get(self.host + '/articles/' + doi, verify=self.verify_ssl)
@@ -134,7 +137,6 @@ class Rhyno(object):
         self._base_publish(doi, publish=True, syndicate_all=True, verbose=verbose)
 
     def unpublish(self, doi, verbose=False):
-        raise NotImplementedError
         self._base_publish(doi, publish=False, verbose=verbose)
 
     def get_journals(self, verbose=False):
