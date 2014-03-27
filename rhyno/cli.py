@@ -22,20 +22,24 @@ def get_rhyno(production):
 
 def publish(args):
     r = get_rhyno(args.production)
-    r.production_publish(args.doi)
+    if args.syndicate:
+        r.production_publish(args.doi)
+    else:
+        r.publish(args.doi)
 
 def parse_call():
     desc = """
     CLI-based rhino tools for manupulating articles in ambra
     """
     parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument('-p', '--production', action="store_true", help="use production rhino (defaults to stage")
+    parser.add_argument('-p', '--production', action="store_true", help="use production rhino (defaults to stage)")
     parser.add_argument('-l', '--logging-level', nargs=1, help="logging level (defaults to ERROR",
                         choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'])
     subparsers = parser.add_subparsers(help='action dispatcher: define an action to run')
 
     parser_publish = subparsers.add_parser('publish',
                                        help="return the number of pages in the article package's pdf")
+    parser_publish.add_argument('-s', '--syndicate', action="store_true", help="also syndicates article to all sources")
     parser_publish.add_argument('doi',
                                 help="article doi")
     parser_publish.set_defaults(func=publish)
