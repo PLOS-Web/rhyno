@@ -22,7 +22,10 @@ def get_rhyno(production):
 
 def publish(args):
     r = get_rhyno(args.production)
-    r.production_publish(args.doi)
+    if args.syndicate:
+        r.production_publish(args.doi)
+    else:
+        r.publish(args.doi)
 
 def unpublish(args):
     r = get_rhyno(args.production)
@@ -30,7 +33,7 @@ def unpublish(args):
 
 def ingest(args):
     r = get_rhyno(args.production)
-    r.ingest(args.doi, force_reingest=args.force)
+    r.ingest(args.file, force_reingest=args.force)
 
 def parse_call():
     desc = """
@@ -52,6 +55,7 @@ def parse_call():
     # publish
     parser_unpublish = subparsers.add_parser('unpublish',
                                            help="unpublish an article")
+    parser_ingest.add_argument('-s', '--syndicate', action="store_true", help="syndicate to all")
     parser_unpublish.add_argument('doi',
                                 help="article doi")
     parser_unpublish.set_defaults(func=unpublish)
@@ -60,8 +64,8 @@ def parse_call():
     parser_ingest = subparsers.add_parser('ingest',
                                           help="ingest an article")
     parser_ingest.add_argument('-f', '--force', action="store_true", help="force ingest")
-    parser_ingest.add_argument('doi',
-                               help="article doi")
+    parser_ingest.add_argument('file',
+                               help="article archive file")
     parser_ingest.set_defaults(func=ingest)
 
 
