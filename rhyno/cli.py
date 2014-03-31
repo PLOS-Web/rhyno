@@ -27,6 +27,14 @@ def publish(args):
     else:
         r.publish(args.doi)
 
+def unpublish(args):
+    r = get_rhyno(args.production)
+    r.unpublish(args.doi)
+
+def ingest(args):
+    r = get_rhyno(args.production)
+    r.ingest(args.doi, force_reingest=args.force)
+
 def parse_call():
     desc = """
     CLI-based rhino tools for manupulating articles in ambra
@@ -37,12 +45,28 @@ def parse_call():
                         choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'])
     subparsers = parser.add_subparsers(help='action dispatcher: define an action to run')
 
+    # publish
     parser_publish = subparsers.add_parser('publish',
-                                       help="return the number of pages in the article package's pdf")
+                                           help="publish an article")
     parser_publish.add_argument('-s', '--syndicate', action="store_true", help="also syndicates article to all sources")
     parser_publish.add_argument('doi',
                                 help="article doi")
     parser_publish.set_defaults(func=publish)
+
+    # publish
+    parser_unpublish = subparsers.add_parser('unpublish',
+                                           help="unpublish an article")
+    parser_unpublish.add_argument('doi',
+                                help="article doi")
+    parser_unpublish.set_defaults(func=unpublish)
+
+    # ingest
+    parser_ingest = subparsers.add_parser('ingest',
+                                          help="ingest an article")
+    parser_ingest.add_argument('-f', '--force', action="store_true", help="force ingest")
+    parser_ingest.add_argument('doi',
+                               help="article doi")
+    parser_ingest.set_defaults(func=ingest)
 
 
     args = parser.parse_args()
