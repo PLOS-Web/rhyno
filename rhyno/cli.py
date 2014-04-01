@@ -56,7 +56,6 @@ def parse_call():
     # publish
     parser_unpublish = subparsers.add_parser('unpublish',
                                            help="unpublish an article")
-    parser_ingest.add_argument('-s', '--syndicate', action="store_true", help="syndicate to all")
     parser_unpublish.add_argument('doi',
                                 help="article doi")
     parser_unpublish.set_defaults(func=unpublish)
